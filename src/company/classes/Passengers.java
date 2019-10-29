@@ -95,6 +95,9 @@ public class Passengers {
         }
         return passenger;
     }
+    public int getSize(){
+        return passengers.size();
+    }
 
     public void Save() {
         if (passengers.size() != 0) {

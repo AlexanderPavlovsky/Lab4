@@ -10,12 +10,23 @@ import static company.classes.FunUtils.*;
 
 
 class BacKUp extends Thread {
+    private boolean exit;
+    private Passengers passengers;
+    BacKUp (boolean exit, Passengers passengers){
+        this.exit = exit;
+        this.passengers = passengers;
+    }
     @Override
     public void run() {
-        try {
-            Thread.sleep((long) (5 * Math.pow(10, 6)));
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        while(!this.exit) {
+            if(passengers.getSize() != 0) {
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    passengers.BackUp();
+                }
+            }
         }
     }
 }
@@ -32,7 +43,7 @@ public class Main {
         int menu, length;
         boolean exit = false;
         Passengers passengers = new Passengers(0);
-        BacKUp bacKUp = new BacKUp();
+        BacKUp bacKUp = new BacKUp(exit,passengers);
         bacKUp.start();
         while (!exit) {
             System.out.println("1) Add passenger\n2) Show all passengers\n3) Show all passengers` sum mass of baggage\n" +
