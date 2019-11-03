@@ -1,9 +1,11 @@
 package company.classes;
 
+import java.io.Serializable;
+
 /**
  * Class Passenger
  */
-public class Passenger {
+public class Passenger implements Serializable {
     /**
      * Name of passenger
      */

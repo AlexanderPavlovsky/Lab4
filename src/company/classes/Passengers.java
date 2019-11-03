@@ -1,13 +1,17 @@
 package company.classes;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Objects;
 
 /**
  * Class Passengers
  */
-public class Passengers {
+public class Passengers implements Serializable {
     /**
      * Array Passenger
      */
@@ -15,13 +19,10 @@ public class Passengers {
 
     /**
      * Construct Passengers
-     *
-     * @param length Quantity of passengers
      */
-    public Passengers(final int length) {
-        this.passengers = new ArrayList<>(length);
+    public Passengers() {
+        this.passengers = new ArrayList<>();
     }
-
     /**
      * Push back to array passengers
      *
@@ -95,39 +96,29 @@ public class Passengers {
         }
         return passenger;
     }
-    public int getSize(){
+
+    /**
+     * Get size of Passengers
+     * @return size
+     */
+    public int getSize() {
         return passengers.size();
     }
 
-    public void Save() {
+    void BackUp() {
+        String timeStamp = new SimpleDateFormat("dd.MM.yyyy HH.mm.ss").format(Calendar.getInstance().getTime());
         if (passengers.size() != 0) {
             try {
-                FileOutputStream fileOutputStream = new FileOutputStream("passengers.txt");
-                ObjectOutputStream out = new ObjectOutputStream(fileOutputStream);
-                out.writeObject(passengers);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public void Load() {
-        try {
-            FileInputStream fileInputStream = new FileInputStream("passengers.txt");
-            ObjectInputStream in = new ObjectInputStream(fileInputStream);
-            this.passengers = (ArrayList<Passenger>)in.readObject();
-            in.close();
-            fileInputStream.close();
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-    public void BackUp() {
-        if (passengers.size() != 0) {
-            try {
-                FileOutputStream fileOutputStream = new FileOutputStream("backup/BKpassengers.txt");
-                ObjectOutputStream out = new ObjectOutputStream(fileOutputStream);
-                out.writeObject(passengers);
+                ObjectMapper objectMapper = new ObjectMapper();
+                if (Objects.requireNonNull(new File("backup").listFiles()).length > 2) {
+                    File[] name = Objects.requireNonNull(new File("backup").listFiles());
+                    boolean delete = name[0].delete();
+                    if(delete){
+                        objectMapper.writeValue(new File("backup/BackUp " + timeStamp + ".json"), passengers);
+                    }
+                } else {
+                    objectMapper.writeValue(new File("backup/BackUp " + timeStamp + ".json"), passengers);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }

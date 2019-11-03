@@ -1,40 +1,29 @@
 package company;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import company.classes.BackUp;
 import company.classes.Passenger;
 import company.classes.Passengers;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Scanner;
 
 import static company.classes.FunUtils.*;
 
 
-class BacKUp extends Thread {
-    private boolean exit;
-    private Passengers passengers;
-    BacKUp (boolean exit, Passengers passengers){
-        this.exit = exit;
-        this.passengers = passengers;
-    }
-    @Override
-    public void run() {
-        while(!this.exit) {
-            if(passengers.getSize() != 0) {
-                try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                    passengers.BackUp();
-                }
-            }
-        }
-    }
-}
-
 /**
  * Class Main
  */
 public class Main {
+    /**
+     * Object Passengers
+     */
+    private static Passengers passengers;
+
     /**
      * Main function
      */
@@ -42,13 +31,14 @@ public class Main {
         final Scanner str = new Scanner(System.in);
         int menu, length;
         boolean exit = false;
-        Passengers passengers = new Passengers(0);
-        BacKUp bacKUp = new BacKUp(exit,passengers);
-        bacKUp.start();
+        passengers = new Passengers();
+        BackUp backUp = new BackUp();
+        backUp.backUp(passengers);
+        backUp.start();
         while (!exit) {
             System.out.println("1) Add passenger\n2) Show all passengers\n3) Show all passengers` sum mass of baggage\n" +
                     "4) Location of baggage\n5) Remove passenger by last name\n6) Save data about passengers\n" +
-                    "7) Load data about passengers\n8) Exit");
+                    "7) Load data about passengers\n8) Load backup data about passengers\n9) Exit");
             menu = getInt();
             switch (menu) {
                 case 1:
@@ -73,23 +63,21 @@ public class Main {
                     System.out.println("\n" + passengers.removeByLastName(str.next()) + "\n");
                     break;
                 case 6:
-                    passengers.Save();
+                    save();
                     break;
                 case 7:
-                    passengers.Load();
+                    load();
                     break;
                 case 8:
+                    loadBackUp();
+                    break;
+                case 9:
                     exit = true;
                     break;
                 default:
                     System.out.println("Error!!!");
                     break;
             }
-        }
-        try {
-            bacKUp.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
     }
 
@@ -168,5 +156,43 @@ public class Main {
         HANDLUGGAGE,
         INLUGGAGE
     }
+    private static void save() {
+        if (passengers.getSize() != 0) {
+            try {
+                ObjectMapper objectMapper = new ObjectMapper();
+                objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+                objectMapper.writeValue(new File("passengers.json"), passengers);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
+    private static void load() {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+            Passengers tempPassengers = objectMapper.readValue(new File("passengers.json"), Passengers.class);
+            //System.out.println(tempPassengers);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    private static void loadBackUp (){
+        File[] name = Objects.requireNonNull(new File("backup").listFiles());
+        System.out.println("Select backup:");
+        for(int i = 0; i < name.length; i++) {
+            System.out.println(i+") "+ name[i].toString());
+        }
+        try {
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+            Passengers tempPassengers = objectMapper.readValue(new File(name[getInt()].toString()), Passengers.class);
+            //System.out.println(tempPassengers);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
