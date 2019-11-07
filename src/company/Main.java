@@ -9,6 +9,8 @@ import company.classes.Passengers;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -156,8 +158,9 @@ public class Main {
         HANDLUGGAGE,
         INLUGGAGE
     }
+
     private static void save() {
-        if (passengers.getSize() != 0) {
+        if (passengers.Size() != 0) {
             try {
                 ObjectMapper objectMapper = new ObjectMapper();
                 objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
@@ -173,25 +176,47 @@ public class Main {
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
             Passengers tempPassengers = objectMapper.readValue(new File("passengers.json"), Passengers.class);
-            //System.out.println(tempPassengers);
+            System.out.println(passengers.toString());
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    private static void loadBackUp (){
+
+    public static void BackUp() {
+        String timeStamp = new SimpleDateFormat("dd.MM.yyyy HH.mm.ss").format(Calendar.getInstance().getTime());
+        if (passengers.Size() != 0) {
+            System.out.println("===BackUp===");
+            try {
+                ObjectMapper objectMapper = new ObjectMapper();
+                objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+                if (Objects.requireNonNull(new File("backup").listFiles()).length > 2) {
+                    File[] name = Objects.requireNonNull(new File("backup").listFiles());
+                    boolean delete = name[0].delete();
+                    if (delete) {
+                        objectMapper.writeValue(new File("backup/BackUp " + timeStamp + ".json"), passengers);
+                    }
+                } else {
+                    objectMapper.writeValue(new File("backup/BackUp " + timeStamp + ".json"), passengers);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private static void loadBackUp() {
         File[] name = Objects.requireNonNull(new File("backup").listFiles());
         System.out.println("Select backup:");
-        for(int i = 0; i < name.length; i++) {
-            System.out.println(i+") "+ name[i].toString());
+        for (int i = 0; i < name.length; i++) {
+            System.out.println((i + 1) + ") " + name[i].toString());
         }
         try {
 
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
             Passengers tempPassengers = objectMapper.readValue(new File(name[getInt()].toString()), Passengers.class);
-            //System.out.println(tempPassengers);
-        }
-        catch (IOException e) {
+            System.out.println(passengers.toString());
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

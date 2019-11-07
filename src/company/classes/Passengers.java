@@ -1,12 +1,8 @@
 package company.classes;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.*;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Objects;
 
 /**
  * Class Passengers
@@ -23,6 +19,11 @@ public class Passengers implements Serializable {
     public Passengers() {
         this.passengers = new ArrayList<>();
     }
+
+    public Passengers(ArrayList<Passenger> passengers) {
+        this.passengers = passengers;
+    }
+
     /**
      * Push back to array passengers
      *
@@ -99,30 +100,11 @@ public class Passengers implements Serializable {
 
     /**
      * Get size of Passengers
+     *
      * @return size
      */
-    public int getSize() {
+    public int Size() {
         return passengers.size();
-    }
-
-    void BackUp() {
-        String timeStamp = new SimpleDateFormat("dd.MM.yyyy HH.mm.ss").format(Calendar.getInstance().getTime());
-        if (passengers.size() != 0) {
-            try {
-                ObjectMapper objectMapper = new ObjectMapper();
-                if (Objects.requireNonNull(new File("backup").listFiles()).length > 2) {
-                    File[] name = Objects.requireNonNull(new File("backup").listFiles());
-                    boolean delete = name[0].delete();
-                    if(delete){
-                        objectMapper.writeValue(new File("backup/BackUp " + timeStamp + ".json"), passengers);
-                    }
-                } else {
-                    objectMapper.writeValue(new File("backup/BackUp " + timeStamp + ".json"), passengers);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     @Override

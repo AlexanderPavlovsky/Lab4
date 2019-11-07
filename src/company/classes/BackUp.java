@@ -1,5 +1,7 @@
 package company.classes;
 
+import company.Main;
+
 /**
  * Class BackUp
  */
@@ -15,9 +17,9 @@ public class BackUp extends Thread {
         try {
             while (true) {
                 Thread.sleep(1000);
-                if (passengers.getSize() != 0) {
-                    System.out.println("===BackUp===");
-                    passengers.BackUp();
+                if (passengers.Size() != 0)
+                {
+                    Main.BackUp();
                 }
             }
         } catch (InterruptedException e) {

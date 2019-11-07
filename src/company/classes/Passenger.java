@@ -59,6 +59,9 @@ public class Passenger implements Serializable {
         return allMassOfBaggage;
     }
 
+    public Passenger () {
+
+    }
     /**
      * Construct of Passenger class
      *
