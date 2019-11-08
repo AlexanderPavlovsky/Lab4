@@ -20,6 +20,7 @@ public class Passengers implements Serializable {
         this.passengers = new ArrayList<>();
     }
 
+
     public Passengers(ArrayList<Passenger> passengers) {
         this.passengers = passengers;
     }
@@ -110,7 +111,7 @@ public class Passengers implements Serializable {
     @Override
     public String toString() {
         final StringBuilder result = new StringBuilder();
-        if (passengers.size() != 0) {
+        if (!passengers.isEmpty()) {
             for (int i = 0; i < passengers.size(); i++) {
                 result.append(i + 1).append(") ").append(passengers.get(i).toString()).append("\n");
             }

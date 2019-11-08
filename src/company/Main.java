@@ -34,8 +34,7 @@ public class Main {
         int menu, length;
         boolean exit = false;
         passengers = new Passengers();
-        BackUp backUp = new BackUp();
-        backUp.backUp(passengers);
+        final BackUp backUp = new BackUp();
         backUp.start();
         while (!exit) {
             System.out.println("1) Add passenger\n2) Show all passengers\n3) Show all passengers` sum mass of baggage\n" +
@@ -162,62 +161,60 @@ public class Main {
     private static void save() {
         if (passengers.Size() != 0) {
             try {
-                ObjectMapper objectMapper = new ObjectMapper();
+                final ObjectMapper objectMapper = new ObjectMapper();
                 objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
                 objectMapper.writeValue(new File("passengers.json"), passengers);
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException error) {
+                error.printStackTrace();
             }
         }
     }
 
     private static void load() {
         try {
-            ObjectMapper objectMapper = new ObjectMapper();
+            final ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
-            Passengers tempPassengers = objectMapper.readValue(new File("passengers.json"), Passengers.class);
-            System.out.println(passengers.toString());
-        } catch (IOException e) {
-            e.printStackTrace();
+            passengers = objectMapper.readValue(new File("passengers.json"), Passengers.class);
+        } catch (IOException error) {
+            error.printStackTrace();
         }
     }
 
     public static void BackUp() {
-        String timeStamp = new SimpleDateFormat("dd.MM.yyyy HH.mm.ss").format(Calendar.getInstance().getTime());
+        final String timeStamp = new SimpleDateFormat("dd.MM.yyyy HH.mm.ss").format(Calendar.getInstance().getTime());
         if (passengers.Size() != 0) {
             System.out.println("===BackUp===");
             try {
-                ObjectMapper objectMapper = new ObjectMapper();
+                final ObjectMapper objectMapper = new ObjectMapper();
                 objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
                 if (Objects.requireNonNull(new File("backup").listFiles()).length > 2) {
-                    File[] name = Objects.requireNonNull(new File("backup").listFiles());
-                    boolean delete = name[0].delete();
+                    final File[] name = Objects.requireNonNull(new File("backup").listFiles());
+                    final boolean delete = name[0].delete();
                     if (delete) {
                         objectMapper.writeValue(new File("backup/BackUp " + timeStamp + ".json"), passengers);
                     }
                 } else {
                     objectMapper.writeValue(new File("backup/BackUp " + timeStamp + ".json"), passengers);
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException error) {
+                error.printStackTrace();
             }
         }
     }
 
     private static void loadBackUp() {
-        File[] name = Objects.requireNonNull(new File("backup").listFiles());
+        final File[] name = Objects.requireNonNull(new File("backup").listFiles());
         System.out.println("Select backup:");
         for (int i = 0; i < name.length; i++) {
             System.out.println((i + 1) + ") " + name[i].toString());
         }
         try {
 
-            ObjectMapper objectMapper = new ObjectMapper();
+            final ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
-            Passengers tempPassengers = objectMapper.readValue(new File(name[getInt()].toString()), Passengers.class);
-            System.out.println(passengers.toString());
-        } catch (IOException e) {
-            e.printStackTrace();
+            passengers = objectMapper.readValue(new File(name[getInt()].toString()), Passengers.class);
+        } catch (IOException error) {
+            error.printStackTrace();
         }
     }
 }

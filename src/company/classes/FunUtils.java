@@ -22,12 +22,10 @@ public class FunUtils {
         boolean check = false;
         do {
             try {
-                String number = str.nextLine();
+                final String number = str.nextLine();
                 num = Integer.parseInt(number);
                 if (num > 0)
                     check = true;
-            } catch (InputMismatchException exc) {
-                System.out.println(exc.getLocalizedMessage());
             } catch (Exception exc) {
                 System.out.println(exc.getLocalizedMessage());
             }
