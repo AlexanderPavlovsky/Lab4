@@ -11,7 +11,7 @@ public class BackUp extends Thread {
     public void run() {
         try {
             while (true) {
-                Thread.sleep(1000);
+                Thread.sleep(3000000);
                 Main.BackUp();
             }
         } catch (InterruptedException e) {
